@@ -10,15 +10,23 @@ M.show_todo_panel = function()
 		return
 	end
 
+	-- Create a scratch buffer
 	buf_id = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, todos)
 
+	-- Make buffer non-editable
 	vim.bo[buf_id].modifiable = false
 	vim.bo[buf_id].buftype = "nofile"
 
+	-- Open vertical split and set width
 	vim.cmd("vsplit")
 	win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(win_id, buf_id)
+	vim.api.nvim_win_set_width(win_id, 30) -- Set width to 30 columns
+
+	-- Apply syntax highlighting to TODOs
+	vim.cmd("highlight TodoHighlight ctermfg=Yellow guifg=Yellow")
+	vim.fn.matchadd("TodoHighlight", "\\(TODO\\|FIXME\\|NOTE\\)")
 end
 
 M.toggle_todo_panel = function()
