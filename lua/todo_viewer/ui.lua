@@ -18,15 +18,19 @@ M.show_todo_panel = function()
 	vim.bo[buf_id].modifiable = false
 	vim.bo[buf_id].buftype = "nofile"
 
-	-- Open vertical split and set width
+	-- Open vertical split and set width to 50
 	vim.cmd("vsplit")
 	win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(win_id, buf_id)
-	vim.api.nvim_win_set_width(win_id, 30) -- Set width to 30 columns
+	vim.api.nvim_win_set_width(win_id, 50)
 
-	-- Apply syntax highlighting to TODOs
+	-- Apply syntax highlighting
 	vim.cmd("highlight TodoHighlight ctermfg=Yellow guifg=Yellow")
+	vim.cmd("highlight FileHeader ctermfg=Blue guifg=Cyan") -- Color for filenames
+
+	-- Highlight TODOs and filenames
 	vim.fn.matchadd("TodoHighlight", "\\(TODO\\|FIXME\\|NOTE\\)")
+	vim.fn.matchadd("FileHeader", "^[^:]*$")
 end
 
 M.toggle_todo_panel = function()
@@ -40,11 +44,18 @@ end
 
 M.open_todo_at_line = function()
 	local line = vim.api.nvim_get_current_line()
-	local file, lnum = line:match("([^:]+):(%d+):")
+	local file, lnum = line:match("^([^:]+)$") -- Check if it's a file header
+
+	if file then
+		vim.cmd("e " .. file) -- Open file only
+		return
+	end
+
+	file, lnum = line:match("([^:]+):(%d+)") -- Extract filename & line number
 
 	if file and lnum then
-		vim.cmd("e " .. file)
-		vim.cmd(lnum)
+		vim.cmd("e " .. file) -- Open file in main buffer
+		vim.cmd(lnum) -- Jump to line number
 	end
 end
 
