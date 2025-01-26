@@ -18,6 +18,13 @@ M.show_todo_panel = function()
 	vim.bo[buf_id].modifiable = false
 	vim.bo[buf_id].buftype = "nofile"
 
+	-- Enable word wrapping
+
+	vim.api.nvim_set_option_value("wrap", true, { buf = buf_id })
+	vim.api.nvim_set_option_value("textwidth", 0, { buf = buf_id })
+	vim.api.nvim_set_option_value("linebreak", true, { buf = buf_id })
+	vim.api.nvim_set_option_value("breakindent", true, { buf = buf_id })
+
 	-- Open vertical split and set width to 50
 	vim.cmd("vsplit")
 	win_id = vim.api.nvim_get_current_win()
@@ -26,7 +33,7 @@ M.show_todo_panel = function()
 
 	-- Apply syntax highlighting
 	vim.cmd("highlight TodoHighlight ctermfg=Yellow guifg=Yellow")
-	vim.cmd("highlight FileHeader ctermfg=Blue guifg=Cyan") -- Color for filenames
+	vim.cmd("highlight FileHeader ctermfg=Blue guifg=Cyan")
 
 	-- Highlight TODOs and filenames
 	vim.fn.matchadd("TodoHighlight", "\\(TODO\\|FIXME\\|NOTE\\)")
