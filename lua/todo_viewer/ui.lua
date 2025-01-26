@@ -20,10 +20,13 @@ M.show_todo_panel = function()
 		buf_id = vim.api.nvim_create_buf(false, true)
 	end
 
+	-- Make buffer modifiable before writing
+	vim.api.nvim_set_option_value("modifiable", true, { buf = buf_id })
+
 	-- Set buffer content
 	vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, todos)
 
-	-- Make buffer non-editable (buffer-local options)
+	-- Now make it non-editable
 	vim.api.nvim_set_option_value("modifiable", false, { buf = buf_id })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf_id })
 
@@ -33,7 +36,7 @@ M.show_todo_panel = function()
 	vim.api.nvim_win_set_buf(win_id, buf_id)
 	vim.api.nvim_win_set_width(win_id, 50) -- Set panel width
 
-	-- Apply window-local options (Fixes the error!)
+	-- Apply window-local options
 	vim.api.nvim_win_set_option(win_id, "wrap", true)
 	vim.api.nvim_win_set_option(win_id, "linebreak", true)
 	vim.api.nvim_win_set_option(win_id, "breakindent", true)
