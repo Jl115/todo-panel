@@ -8,7 +8,7 @@ For **LazyVim**:
 
 ```lua
 {
-    "Jl115/todo-viewer.nvim",
+    "Jl115/todo-panel.nvim",
     config = function()
         require("todo_viewer").setup()
     end
