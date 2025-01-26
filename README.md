@@ -8,7 +8,7 @@ For **LazyVim**:
 
 ```lua
 {
-    "YOUR-USERNAME/todo-viewer.nvim",
+    "Jl115/todo-viewer.nvim",
     config = function()
         require("todo_viewer").setup()
     end
