@@ -12,34 +12,31 @@ M.show_todo_panel = function()
 
 	-- Check if buffer already exists
 	if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
-		-- If the buffer exists, just show it
 		if win_id and vim.api.nvim_win_is_valid(win_id) then
 			vim.api.nvim_set_current_win(win_id)
 			return
 		end
 	else
-		-- Create a new buffer
 		buf_id = vim.api.nvim_create_buf(false, true)
 	end
 
 	-- Set buffer content
 	vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, todos)
 
-	-- Make buffer non-editable
+	-- Make buffer non-editable (buffer-local options)
 	vim.api.nvim_set_option_value("modifiable", false, { buf = buf_id })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf_id })
-
-	-- Enable proper word wrapping
-	vim.api.nvim_set_option_value("wrap", true, { buf = buf_id })
-	vim.api.nvim_set_option_value("textwidth", 0, { buf = buf_id })
-	vim.api.nvim_set_option_value("linebreak", true, { buf = buf_id })
-	vim.api.nvim_set_option_value("breakindent", true, { buf = buf_id })
 
 	-- Open the panel on the **left** instead of right
 	vim.cmd("topleft vsplit")
 	win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(win_id, buf_id)
 	vim.api.nvim_win_set_width(win_id, 50) -- Set panel width
+
+	-- Apply window-local options (Fixes the error!)
+	vim.api.nvim_win_set_option(win_id, "wrap", true)
+	vim.api.nvim_win_set_option(win_id, "linebreak", true)
+	vim.api.nvim_win_set_option(win_id, "breakindent", true)
 
 	-- Apply syntax highlighting
 	vim.cmd("highlight TodoHighlight ctermfg=Yellow guifg=Yellow")
