@@ -30,8 +30,8 @@ M.show_todo_panel = function()
 	vim.api.nvim_set_option_value("modifiable", false, { buf = buf_id })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf_id })
 
-	-- Open the panel on the **left** instead of right
-	vim.cmd("topleft vsplit")
+	-- **Open the panel on the RIGHT side**
+	vim.cmd("botright vsplit") -- This ensures the split happens on the right
 	win_id = vim.api.nvim_get_current_win()
 	vim.api.nvim_win_set_buf(win_id, buf_id)
 	vim.api.nvim_win_set_width(win_id, 50) -- Set panel width
