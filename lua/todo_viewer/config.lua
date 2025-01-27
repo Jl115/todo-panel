@@ -1,8 +1,7 @@
 local M = {}
 
 M.default_keymap = {
-	toggle = "<leader>t",
-	open = "l",
+	toggle = "<leader>t"
 }
 
 return M
