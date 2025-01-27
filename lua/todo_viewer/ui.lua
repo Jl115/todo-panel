@@ -67,17 +67,26 @@ M.open_todo_at_line = function()
     local file, lnum = line:match("^([^:]+)$")  -- Check if it's a file header
 
     if file then
-        vim.cmd("e " .. file)  -- Open file only
+        -- Move back to the main window
+        if win_id and vim.api.nvim_win_is_valid(win_id) then
+            vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
+        end
+        vim.cmd("e " .. file)  -- Open file in the main window
         return
     end
 
     file, lnum = line:match("([^:]+):(%d+)") -- Extract filename & line number
 
     if file and lnum then
-        vim.cmd("e " .. file)  -- Open file in main buffer
+        -- Move back to the main window
+        if win_id and vim.api.nvim_win_is_valid(win_id) then
+            vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
+        end
+        vim.cmd("e " .. file)  -- Open file in main window
         vim.cmd(lnum)  -- Jump to line number
     end
 end
+
 
 -- **Ensure all functions are included in `return M`**
 return M
