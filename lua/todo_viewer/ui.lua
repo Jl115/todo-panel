@@ -11,8 +11,10 @@ M.show_todo_panel = function()
         return
     end
 
-    -- Store the current window (main editor window)
-    main_win_id = vim.api.nvim_get_current_win()
+    -- Store the current main window (where the user is before opening the TODO panel)
+    if not main_win_id or not vim.api.nvim_win_is_valid(main_win_id) then
+        main_win_id = vim.api.nvim_get_current_win()
+    end
 
     -- Check if buffer already exists
     if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
@@ -35,7 +37,7 @@ M.show_todo_panel = function()
     vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf_id })
 
     -- **Open the panel on the RIGHT side**
-    vim.cmd("botright vsplit")  -- This ensures the split happens on the right
+    vim.cmd("botright vsplit")  -- Opens on the right side
     win_id = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(win_id, buf_id)
     vim.api.nvim_win_set_width(win_id, 50) -- Set panel width
@@ -70,21 +72,24 @@ M.open_todo_at_line = function()
     local line = vim.api.nvim_get_current_line()
     local file, lnum = line:match("^([^:]+)$")  -- Check if it's a file header
 
-    -- Switch focus to main window before opening file
-    if main_win_id and vim.api.nvim_win_is_valid(main_win_id) then
-        vim.api.nvim_set_current_win(main_win_id)
+    if not file then
+        file, lnum = line:match("([^:]+):(%d+)") -- Extract filename & line number
     end
 
     if file then
-        vim.cmd("e " .. file)  -- Open file in the main window
-        return
-    end
+        -- **Switch back to the main window before opening the file**
+        if main_win_id and vim.api.nvim_win_is_valid(main_win_id) then
+            vim.api.nvim_set_current_win(main_win_id)  -- Move focus to main editor window
+        else
+            print("Error: main window not found")
+            return
+        end
 
-    file, lnum = line:match("([^:]+):(%d+)") -- Extract filename & line number
-
-    if file and lnum then
         vim.cmd("e " .. file)  -- Open file in main window
-        vim.cmd(lnum)  -- Jump to line number
+
+        if lnum then
+            vim.cmd(lnum)  -- Jump to line number
+        end
     end
 end
 
