@@ -2,6 +2,7 @@ local M = {}
 
 local win_id = nil
 local buf_id = nil
+local main_win_id = nil  -- Store the main window ID
 
 M.show_todo_panel = function()
     local todos = require("todo_viewer.search").search_todos()
@@ -9,6 +10,9 @@ M.show_todo_panel = function()
         print("No TODOs found")
         return
     end
+
+    -- Store the current window (main editor window)
+    main_win_id = vim.api.nvim_get_current_win()
 
     -- Check if buffer already exists
     if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
@@ -66,11 +70,12 @@ M.open_todo_at_line = function()
     local line = vim.api.nvim_get_current_line()
     local file, lnum = line:match("^([^:]+)$")  -- Check if it's a file header
 
+    -- Switch focus to main window before opening file
+    if main_win_id and vim.api.nvim_win_is_valid(main_win_id) then
+        vim.api.nvim_set_current_win(main_win_id)
+    end
+
     if file then
-        -- Move back to the main window
-        if win_id and vim.api.nvim_win_is_valid(win_id) then
-            vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
-        end
         vim.cmd("e " .. file)  -- Open file in the main window
         return
     end
@@ -78,15 +83,9 @@ M.open_todo_at_line = function()
     file, lnum = line:match("([^:]+):(%d+)") -- Extract filename & line number
 
     if file and lnum then
-        -- Move back to the main window
-        if win_id and vim.api.nvim_win_is_valid(win_id) then
-            vim.api.nvim_set_current_win(vim.fn.win_getid(vim.fn.winnr("#")))
-        end
         vim.cmd("e " .. file)  -- Open file in main window
         vim.cmd(lnum)  -- Jump to line number
     end
 end
 
-
--- **Ensure all functions are included in `return M`**
 return M
