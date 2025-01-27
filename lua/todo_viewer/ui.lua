@@ -50,7 +50,7 @@ M.show_todo_panel = function()
     vim.fn.matchadd("FileHeader", "^[^:]*$")
 
     -- **Set 'l' keymap only for this buffer**
-    vim.api.nvim_buf_set_keymap(buf_id, "n", "l", ":lua require('todo_viewer').open_todo_at_line()<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf_id, "n", "l", ":lua require('todo_viewer.ui').open_todo_at_line()<CR>", { noremap = true, silent = true })
 end
 
 M.toggle_todo_panel = function()
@@ -79,4 +79,5 @@ M.open_todo_at_line = function()
     end
 end
 
+-- **Ensure all functions are included in `return M`**
 return M
