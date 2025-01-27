@@ -7,7 +7,7 @@ M.toggle_todo_panel = function()
 end
 
 M.setup = function()
-    -- Only keep the global toggle keymap
+    -- Only global toggle keymap
     vim.api.nvim_set_keymap(
         "n",
         "<leader>t",
